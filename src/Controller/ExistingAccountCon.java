@@ -14,34 +14,43 @@ import java.util.Observer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+
 public class ExistingAccountCon implements Observer{
 
-    private int currentAcc = 0;
+    //Local Variables
+    private int currentAcc = -1;
     private Model m;
-    private ExistingAccount accView;
-    
-    public ExistingAccountCon(Model m, ExistingAccount v) {
+    private ExistingAccount view;
+
+
+
+    public ExistingAccountCon(Model m, ExistingAccount view)
+
+    {
+
         this.m = m;
-        this.accView = accView;
+        this.view = view;
         m.addObserver(this);
-        
+
         setSelectButton();
         setDepositButton();
         setWithdrawButton();
         setDeleteButton();
     }
-    
+
     @Override
     public void update(Observable o, Object o1) {
         checkAccountInput();
-        accView.resetInputFields();
+        view.resetInputFields();
     }
-    
-    private void checkAccountInput() {
-        currentAcc = accView.getAccountID();
+
+
+    private void checkAccountInput()
+    {
+        currentAcc = view.getAccountID();
         if(m.getAccount(currentAcc) != null)
         {
-            accView.setBalance(m.getAccount(currentAcc).getBalance());
+            view.setBalance(m.getAccount(currentAcc).getBalance());
         }
         else
         {
@@ -50,8 +59,9 @@ public class ExistingAccountCon implements Observer{
         }
     }
     //Setters
-    private void setSelectButton() {
-        accView.bindSelectButton(new EventHandler<ActionEvent>() {
+    private void setSelectButton()
+    {
+        view.bindSelectButton(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 checkAccountInput();
@@ -59,44 +69,51 @@ public class ExistingAccountCon implements Observer{
         });
     }
 
-    private void setWithdrawButton() {
-        accView.bindWithdrawButton(new EventHandler<ActionEvent>() {
+
+    private void setWithdrawButton()
+    {
+        view.bindWithdrawButton(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //Make sure the right account is signed in
-                if(accView.getAccountID() != currentAcc)
+                if(view.getAccountID() != currentAcc)
                     checkAccountInput();
                 
                 //-1 represents an invalid account
                 if(currentAcc != -1)
                 {
-                    m.withdraw(currentAcc, accView.getWithdraw());
+                    m.withdraw(currentAcc, view.getWithdraw());
                 }
                 else
                 {
                     invalidAccount();
                 }
+
             }
+
         });
+
     }
-    
-    private void invalidAccount() {
-        accView.setBalanceField("Invalid");
+
+    private void invalidAccount()
+    {
+        view.setBalanceField("Invalid");
     }
-    
+
     //Setters
-    private void setDepositButton() {
-        accView.bindDepositButton(new EventHandler<ActionEvent>() {
+    private void setDepositButton()
+    {
+        view.bindDepositButton(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //Make sure the right account is signed in
-                if(accView.getAccountID() != currentAcc)
+                if(view.getAccountID() != currentAcc)
                     checkAccountInput();
-                
+
                 //-1 represents an invalid account
                 if(currentAcc != -1)
                 {
-                    m.deposit(currentAcc, accView.getDeposit());
+                    m.deposit(currentAcc, view.getDeposit());
                 }
                 else
                 {
@@ -105,14 +122,16 @@ public class ExistingAccountCon implements Observer{
             }
         });
     }
-    
-    private void setDeleteButton() {
-        accView.bindDeleteButton(new EventHandler<ActionEvent>() {
+
+
+    private void setDeleteButton()
+    {
+        view.bindDeleteButton(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent e) {
-                
+            public void handle(ActionEvent event) {
+
                 //Make sure the right account is signed in
-                if(accView.getAccountID() != currentAcc)
+                if(view.getAccountID() != currentAcc)
                     checkAccountInput();
                 
                 boolean success = false;
@@ -121,9 +140,9 @@ public class ExistingAccountCon implements Observer{
                     success = m.delAccount(currentAcc);
                 
                 if(success)
-                    accView.setBalanceField("Deleted");
+                    view.setBalanceField("Success");
                 else
-                    accView.setBalanceField("Error");
+                    view.setBalanceField("Failure");
             }
         });
     }
